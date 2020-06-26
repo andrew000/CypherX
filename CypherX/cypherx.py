@@ -2,23 +2,18 @@ ASCII_LOWERCASE = tuple('abcdefghijklmnopqrstuvwxyz')
 ASCII_UPPERCASE = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
 
-class BadString(Exception):
-    def __init__(self, raw_string):
-        self.raw_string = raw_string
-
-    def __str__(self):
-        return f"Bad String -> {self.raw_string}"
-
-
 class CaesarCypher:
     """
-    Docs)
+    Encode:
+
+    - Just put raw_string and key into class
+
+    Decode:
+
+    - Just put encoded string and key into class
     """
 
     def __init__(self, raw_string: str, key: int):
-        if not raw_string.isascii():
-            raise BadString(raw_string)
-
         self.raw_string = raw_string
         self.key = key
         self.encoded_string = self.caesar_encode(self.key)
@@ -29,7 +24,7 @@ class CaesarCypher:
             [(lambda k: ASCII_LOWERCASE[abs(k % 26)])(ASCII_LOWERCASE.index(char) + key)
              if char in ASCII_LOWERCASE else
              (lambda k: ASCII_UPPERCASE[abs(k % 26)])(ASCII_UPPERCASE.index(char) + key)
-             if char in ASCII_UPPERCASE else ' '
+             if char in ASCII_UPPERCASE else char
              for char in self.raw_string]
         )
         return self.encoded_string
@@ -39,7 +34,7 @@ class CaesarCypher:
             [(lambda k: ASCII_LOWERCASE[abs(k % 26)])(ASCII_LOWERCASE.index(char) - key)
              if char in ASCII_LOWERCASE else
              (lambda k: ASCII_UPPERCASE[abs(k % 26)])(ASCII_UPPERCASE.index(char) - key)
-             if char in ASCII_UPPERCASE else ' '
+             if char in ASCII_UPPERCASE else char
              for char in self.raw_string]
         )
         return self.decoded_string
@@ -61,7 +56,7 @@ class CaesarCracker:
     Brute all 26 keys
     """
 
-    def __init__(self, raw_string):
+    def __init__(self, raw_string: str):
         self.raw_string = raw_string
         self.cracked = None
 
