@@ -1,5 +1,7 @@
 ASCII_LOWERCASE = tuple('abcdefghijklmnopqrstuvwxyz')
 ASCII_UPPERCASE = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+CYRILLIC_LOWERCASE = tuple('абвгдеёжзийклмнопстуфхцчшщъыьэюя')
+CYRILLIC_UPPERCASE = tuple('АБВГДЕЁЖЗИЙКЛМНОПСТУФХЦЧШЩЪЫЬЭЮЯ')
 
 
 class CaesarCypher:
@@ -24,7 +26,11 @@ class CaesarCypher:
             [(lambda k: ASCII_LOWERCASE[abs(k % 26)])(ASCII_LOWERCASE.index(char) + key)
              if char in ASCII_LOWERCASE else
              (lambda k: ASCII_UPPERCASE[abs(k % 26)])(ASCII_UPPERCASE.index(char) + key)
-             if char in ASCII_UPPERCASE else char
+             if char in ASCII_UPPERCASE else
+             (lambda k: CYRILLIC_LOWERCASE[abs(k % 26)])(CYRILLIC_LOWERCASE.index(char) + key)
+             if char in CYRILLIC_LOWERCASE else
+             (lambda k: CYRILLIC_UPPERCASE[abs(k % 26)])(CYRILLIC_UPPERCASE.index(char) + key)
+             if char in CYRILLIC_UPPERCASE else char
              for char in self.raw_string]
         )
         return self.encoded_string
@@ -34,7 +40,11 @@ class CaesarCypher:
             [(lambda k: ASCII_LOWERCASE[abs(k % 26)])(ASCII_LOWERCASE.index(char) - key)
              if char in ASCII_LOWERCASE else
              (lambda k: ASCII_UPPERCASE[abs(k % 26)])(ASCII_UPPERCASE.index(char) - key)
-             if char in ASCII_UPPERCASE else char
+             if char in ASCII_UPPERCASE else
+             (lambda k: CYRILLIC_LOWERCASE[abs(k % 26)])(CYRILLIC_LOWERCASE.index(char) - key)
+             if char in CYRILLIC_LOWERCASE else
+             (lambda k: CYRILLIC_UPPERCASE[abs(k % 26)])(CYRILLIC_UPPERCASE.index(char) - key)
+             if char in CYRILLIC_UPPERCASE else char
              for char in self.raw_string]
         )
         return self.decoded_string
