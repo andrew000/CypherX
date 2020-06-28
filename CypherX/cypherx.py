@@ -1,7 +1,23 @@
-ASCII_LOWERCASE = tuple('abcdefghijklmnopqrstuvwxyz')
-ASCII_UPPERCASE = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-CYRILLIC_LOWERCASE = tuple('абвгдеёжзийклмнопстуфхцчшщъыьэюя')
-CYRILLIC_UPPERCASE = tuple('АБВГДЕЁЖЗИЙКЛМНОПСТУФХЦЧШЩЪЫЬЭЮЯ')
+from collections import deque
+
+ASCII_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'
+ASCII_UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+CYRILLIC_LOWERCASE = 'абвгдеёжзийклмнопстуфхцчшщъыьэюя'
+CYRILLIC_UPPERCASE = 'АБВГДЕЁЖЗИЙКЛМНОПСТУФХЦЧШЩЪЫЬЭЮЯ'
+
+
+def _make_translator(key):
+    chars = deque(ASCII_LOWERCASE), deque(ASCII_UPPERCASE), \
+            deque(CYRILLIC_LOWERCASE), deque(CYRILLIC_UPPERCASE)
+    rotor = {}
+
+    for de in chars:
+        de.rotate(-key)
+
+    for sym, de in zip((ASCII_LOWERCASE, ASCII_UPPERCASE, CYRILLIC_LOWERCASE, CYRILLIC_UPPERCASE), chars):
+        rotor.update(str.maketrans(sym, "".join(de)))
+
+    return rotor
 
 
 class CaesarCypher:
@@ -18,42 +34,18 @@ class CaesarCypher:
     def __init__(self, raw_string: str, key: int):
         self.raw_string = raw_string
         self.key = key
-        self.encoded_string = self.caesar_encode(self.key)
-        self.decoded_string = self.caesar_decode(self.key)
+        self.encoded = self.rotators(self.key)
+        self.decoded = self.rotators(-self.key)
 
-    def caesar_encode(self, key: int):
-        self.encoded_string = ''.join(
-            [(lambda k: ASCII_LOWERCASE[abs(k % 26)])(ASCII_LOWERCASE.index(char) + key)
-             if char in ASCII_LOWERCASE else
-             (lambda k: ASCII_UPPERCASE[abs(k % 26)])(ASCII_UPPERCASE.index(char) + key)
-             if char in ASCII_UPPERCASE else
-             (lambda k: CYRILLIC_LOWERCASE[abs(k % 26)])(CYRILLIC_LOWERCASE.index(char) + key)
-             if char in CYRILLIC_LOWERCASE else
-             (lambda k: CYRILLIC_UPPERCASE[abs(k % 26)])(CYRILLIC_UPPERCASE.index(char) + key)
-             if char in CYRILLIC_UPPERCASE else char
-             for char in self.raw_string]
-        )
-        return self.encoded_string
-
-    def caesar_decode(self, key: int):
-        self.decoded_string = ''.join(
-            [(lambda k: ASCII_LOWERCASE[abs(k % 26)])(ASCII_LOWERCASE.index(char) - key)
-             if char in ASCII_LOWERCASE else
-             (lambda k: ASCII_UPPERCASE[abs(k % 26)])(ASCII_UPPERCASE.index(char) - key)
-             if char in ASCII_UPPERCASE else
-             (lambda k: CYRILLIC_LOWERCASE[abs(k % 26)])(CYRILLIC_LOWERCASE.index(char) - key)
-             if char in CYRILLIC_LOWERCASE else
-             (lambda k: CYRILLIC_UPPERCASE[abs(k % 26)])(CYRILLIC_UPPERCASE.index(char) - key)
-             if char in CYRILLIC_UPPERCASE else char
-             for char in self.raw_string]
-        )
-        return self.decoded_string
+    def rotators(self, key: int):
+        translator = _make_translator(key)
+        return self.raw_string.translate(translator)
 
     def __str__(self):
         return "RAW: {}\n" \
                "Key: {}\n" \
                "Encoded: {}\n" \
-               "Decoded: {}".format(self.raw_string, self.key, self.encoded_string, self.decoded_string)
+               "Decoded: {}".format(self.raw_string, self.key, self.encoded, self.decoded)
 
     def __repr__(self):
         return self.__str__()
@@ -74,7 +66,7 @@ class CaesarCracker:
 
     def crack(self):
         self.cracked = ["{}: {}".format(i, string) for i, string in
-                        enumerate([CaesarCypher(self.raw_string, key).decoded_string for key in range(1, 27)], start=1)]
+                        enumerate([CaesarCypher(self.raw_string, key).decoded for key in range(1, 27)], start=1)]
         return self.cracked
 
     def __str__(self):
