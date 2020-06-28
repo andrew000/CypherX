@@ -21,7 +21,7 @@ Encoded: Uryyb Jbeyq!!!
 Decoded: Uryyb Jbeyq!!!
 """
 
-print(cypher.encoded_string)
+print(cypher.encoded)
 
 """
 Uryyb Jbeyq!!!
