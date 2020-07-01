@@ -50,3 +50,32 @@ print(cracker)
 ...
 """
 ```
+
+---
+
+### VigenereCypher
+
+Encode and decode Vigenere cypher.
+```python
+from CypherX import VigenereCypher
+
+cypher = VigenereCypher("Hello World!!!", "pizza")
+
+print(cypher)
+
+"""
+RAW: Hello World!!!
+Key: [15, 8, 25, 25, 0]
+Encoded: Wmkko Lwqkd!!!
+Decoded: Swmmo Hgsmd!!!
+"""
+
+print(cypher.encoded)
+
+"""
+Wmkko Lwqkd!!!
+"""
+
+```
+
+___
