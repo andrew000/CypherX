@@ -37,20 +37,56 @@ class CaesarCypher:
     """
 
     def __init__(self, raw_string: str, key: int, encode: bool = True, decode: bool = True):
-        self.raw_string = raw_string
-        self.key = key
-        self.encoded = self.rotators(self.key) if encode is True else None
-        self.decoded = self.rotators(-self.key) if decode is True else None
+        self.__raw_string = raw_string
+        self.__key = key
+        self.__encoded = self.rotor(self.__key) if encode is True else None
+        self.__decoded = self.rotor(-self.__key) if decode is True else None
 
-    def rotators(self, key: int):
+    def rotor(self, key: int):
         translator = _caesar_translator(key)
-        return self.raw_string.translate(translator)
+        return self.__raw_string.translate(translator)
+
+    @property
+    def raw_string(self):
+        return self.__raw_string
+
+    @raw_string.setter
+    def raw_string(self, value):
+        self.__raw_string = value
+        self.__encoded = self.rotor(self.__key)
+        self.__decoded = self.rotor(-self.__key)
+
+    @property
+    def key(self):
+        return self.__key
+
+    @key.setter
+    def key(self, value):
+        self.__key = value
+        self.__encoded = self.rotor(self.__key)
+        self.__decoded = self.rotor(-self.__key)
+
+    @property
+    def encoded(self):
+        return self.__encoded
+
+    @encoded.setter
+    def encoded(self, value):
+        raise AttributeError
+
+    @property
+    def decoded(self):
+        return self.__decoded
+
+    @decoded.setter
+    def decoded(self, value):
+        raise AttributeError
 
     def __str__(self):
         return "RAW: {}\n" \
                "Key: {}\n" \
                "Encoded: {}\n" \
-               "Decoded: {}".format(self.raw_string, self.key, self.encoded, self.decoded)
+               "Decoded: {}".format(self.__raw_string, self.__key, self.__encoded, self.__decoded)
 
     def __repr__(self):
         return self.__str__()
@@ -64,15 +100,24 @@ class CaesarCracker:
     """
 
     def __init__(self, raw_string: str):
-        self.raw_string = raw_string
+        self.__raw_string = raw_string
         self.cracked = None
 
         self.crack()
 
     def crack(self):
         self.cracked = ["{}: {}".format(i, string) for i, string in
-                        enumerate([CaesarCypher(self.raw_string, key).decoded for key in range(1, 27)], start=1)]
+                        enumerate([CaesarCypher(self.__raw_string, key).decoded for key in range(1, 27)], start=1)]
         return self.cracked
+
+    @property
+    def raw_string(self):
+        return self.__raw_string
+
+    @raw_string.setter
+    def raw_string(self, value):
+        self.__raw_string = value
+        self.crack()
 
     def __str__(self):
         return "\n".join(self.cracked)
@@ -84,15 +129,15 @@ class CaesarCracker:
 class VigenereCypher:
 
     def __init__(self, raw_string: str, key: str, encode: bool = True, decode: bool = True):
-        self.raw_string = raw_string
-        self.key = [
+        self.__raw_string = raw_string
+        self.__key = [
             ASCII_LOWERCASE.index(char) if char in ASCII_LOWERCASE else
             ASCII_UPPERCASE.index(char) if char in ASCII_UPPERCASE else
             CYRILLIC_LOWERCASE.index(char) if char in CYRILLIC_LOWERCASE else
             CYRILLIC_UPPERCASE.index(char) if char in CYRILLIC_UPPERCASE else
             char for char in key]
-        self.encoded = self.rotor(self.key) if encode is True else None
-        self.decoded = self.rotor([-x for x in self.key]) if decode is True else None
+        self.__encoded = self.rotor(self.__key) if encode is True else None
+        self.__decoded = self.rotor([-x for x in self.__key]) if decode is True else None
 
     def rotor(self, key: list):
         t_cycle = cycle(key)
@@ -109,13 +154,49 @@ class VigenereCypher:
                         CYRILLIC_UPPERCASE[(CYRILLIC_UPPERCASE.index(char) + next(t_cycle)) % LEN_CYRILLIC_UPPERCASE]
                         if char in CYRILLIC_UPPERCASE else
 
-                        char for char in self.raw_string])
+                        char for char in self.__raw_string])
+
+    @property
+    def raw_string(self):
+        return self.__raw_string
+
+    @raw_string.setter
+    def raw_string(self, value):
+        self.__raw_string = value
+        self.__encoded = self.rotor(self.__key)
+        self.__decoded = self.rotor([-x for x in self.__key])
+
+    @property
+    def key(self):
+        return self.__key
+
+    @key.setter
+    def key(self, value):
+        self.__key = value
+        self.__encoded = self.rotor(self.__key)
+        self.__decoded = self.rotor([-x for x in self.__key])
+
+    @property
+    def encoded(self):
+        return self.__encoded
+
+    @encoded.setter
+    def encoded(self, value):
+        raise AttributeError
+
+    @property
+    def decoded(self):
+        return self.__decoded
+
+    @decoded.setter
+    def decoded(self, value):
+        raise AttributeError
 
     def __str__(self):
         return "RAW: {}\n" \
                "Key: {}\n" \
                "Encoded: {}\n" \
-               "Decoded: {}".format(self.raw_string, self.key, self.encoded, self.decoded)
+               "Decoded: {}".format(self.__raw_string, self.__key, self.__encoded, self.__decoded)
 
     def __repr__(self):
         return self.__str__()
