@@ -172,7 +172,12 @@ class VigenereCypher:
 
     @key.setter
     def key(self, value):
-        self.__key = value
+        self.__key = [
+            ASCII_LOWERCASE.index(char) if char in ASCII_LOWERCASE else
+            ASCII_UPPERCASE.index(char) if char in ASCII_UPPERCASE else
+            CYRILLIC_LOWERCASE.index(char) if char in CYRILLIC_LOWERCASE else
+            CYRILLIC_UPPERCASE.index(char) if char in CYRILLIC_UPPERCASE else
+            char for char in value]
         self.__encoded = self.rotor(self.__key)
         self.__decoded = self.rotor([-x for x in self.__key])
 
