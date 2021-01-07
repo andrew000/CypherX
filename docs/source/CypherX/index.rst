@@ -1,0 +1,5 @@
+CypherX
+========
+
+.. toctree::
+    XORCypher

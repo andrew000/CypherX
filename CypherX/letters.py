@@ -1,3 +1,11 @@
+"""
+We don't use 'string' library because it has not Cyrillic chars.
+
+We calculate the lengths of the alphabets in advance so as not to count them during cipher calculations.
+
+So be nice)
+"""
+
 _ASCII_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'
 _ASCII_UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 _CYRILLIC_LOWERCASE = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяі'
